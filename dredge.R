@@ -30,7 +30,7 @@ max.r <- function(x){
   }
 }
 
-myfun(Fullmodel) ##Test function
+max.r(Fullmodel) ##Test function
 ###Run dredge specifying the number of predictor variables and including the max.r function
 options(na.action = na.fail)
 Allmodels <- dredge(Fullmodel, rank = "AIC", m.lim=c(0, 3), extra= max.r) 
@@ -64,7 +64,7 @@ max.r <- function(x){
   }
 }
 
-myfun(Fullmodel) ##Test function
+max.r(Fullmodel) ##Test function
 ###Run dredge specifying the number of predictor variables and including the max.r function
 options(na.action = na.fail)
 Allmodels <- dredge(Fullmodel, rank = "AIC", m.lim=c(0, 3), extra= max.r) 
