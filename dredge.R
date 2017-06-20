@@ -35,6 +35,8 @@ max.r(Fullmodel) ##Test function
 options(na.action = na.fail)
 Allmodels <- dredge(Fullmodel, rank = "AIC", m.lim=c(0, 3), extra= max.r) 
 Allmodels[Allmodels$max.r<=0.6, ] ##Subset models with max.r <=0.6 (not collinear)
+NCM <- get.models(Allmodels, subset = max.r<=0.6) ##Retrieve models with max.r <=0.6 (not collinear)
+model.sel(NCM) ##Final model selection table
 
 ##################################### lme4 package
 library(lme4)
@@ -69,6 +71,8 @@ max.r(Fullmodel) ##Test function
 options(na.action = na.fail)
 Allmodels <- dredge(Fullmodel, rank = "AIC", m.lim=c(0, 3), extra= max.r) 
 Allmodels[Allmodels$max.r<=0.6, ] ##Subset models with max.r <=0.6 (not collinear)
+NCM <- get.models(Allmodels, subset = max.r<=0.6) ##Retrieve models with max.r <=0.6 (not collinear)
+model.sel(NCM) ##Final model selection table
 
 
 
