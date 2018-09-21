@@ -14,7 +14,7 @@ Fullmodel <- gls(A ~ B + C + D + E, data = rdata, method="ML")
 
 ### Function to calculate maximum correlation coefficient between predictor variables, retrieved from each model
 max.r <- function(x){
-  corm <- summary(x)$corBeta
+  corm <- summary(x)$corBeta ## use corFixed for lme models
   corm <- as.matrix(corm)
   if (length(corm)==1){
     corm <- 0
