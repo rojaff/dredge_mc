@@ -1,20 +1,30 @@
 
 ############### Using dredge with defined number of predictors and custom function to assess MC #################
+library(MASS)
+library(MuMIn)
+
+## Create dataset with correlated variables
+mu <- rep(0,2)
+Sigma <- matrix(.7, nrow=2, ncol=2) + diag(2)*.3
+rawvars <- mvrnorm(n=10000, mu=mu, Sigma=Sigma)
+
+rdata <- data.frame(A=rawvars[,1], B=rawvars[, 2], C=rnorm(10000), D=rep(c("A","B","C", "D"), each=10, 10000))
+cor(rdata[, 1:3])
 
 #################################### nlme package
 library(nlme)
-library(MuMIn)
 
-##Random dataset
-rdata <- data.frame(A=rnorm(100), B=(rnorm(100)*2), C=(rnorm(100)/2), D=(rnorm(100)+5), E=(rnorm(100)-5))
-head(rdata)
-
-###Full model
-Fullmodel <- gls(A ~ B + C + D + E, data = rdata, method="ML")
+### Full models
+gls.model <- gls(A ~ B + C + D, data = rdata, method="ML")
+lme.model <- lme(A ~ B + C, random = ~1| D, data = rdata, method="ML")
 
 ### Function to calculate maximum correlation coefficient between predictor variables, retrieved from each model
 max.r <- function(x){
-  corm <- summary(x)$corBeta ## use corFixed for lme models
+  if(class(x)=="gls"){
+  corm <- summary(x)$corBeta} 
+  else if(class(x)=="lme"){
+    corm <- summary(x)$corFixed}
+  else { print("Error: unknown model class")}
   corm <- as.matrix(corm)
   if (length(corm)==1){
     corm <- 0
@@ -30,7 +40,9 @@ max.r <- function(x){
   }
 }
 
-max.r(Fullmodel) ##Test function
+max.r(gls.model) ##
+max.r(lme.model) ##
+##Test function
 ###Run dredge specifying the number of predictor variables and including the max.r function
 options(na.action = na.fail)
 Allmodels <- dredge(Fullmodel, rank = "AIC", m.lim=c(0, 3), extra= c(max.r)) 
@@ -41,15 +53,11 @@ model.sel(NCM) ##Final model selection table
 ##################################### lme4 package
 library(lme4)
 
-##Random dataset
-rdata <- data.frame(A=rnorm(100), B=(rnorm(100)*2), C=(rnorm(100)/2), D=(rnorm(100)+5), E=rep(1:10, 5))
-rdata$E <- factor(rdata$E)
-
 ###Full model
-Fullmodel <- lmer(A ~ B + C + D + (1|E), data = rdata, REML=F)
+lmer.model <- lmer(A ~ B + C + (1|D), data = rdata, REML=F)
 
 ### Function to calculate maximum correlation coefficient between predictor variables, retrieved from each model
-max.r <- function(x){
+max.r2 <- function(x){
   corm <- cov2cor(vcov(x))
   corm <- as.matrix(corm)
   if (length(corm)==1){
@@ -66,10 +74,10 @@ max.r <- function(x){
   }
 }
 
-max.r(Fullmodel) ##Test function
+max.r2(lmer.model) ##Test function
 ###Run dredge specifying the number of predictor variables and including the max.r function
 options(na.action = na.fail)
-Allmodels <- dredge(Fullmodel, rank = "AIC", m.lim=c(0, 3), extra= c(max.r)) 
+Allmodels <- dredge(lmer.model, rank = "AIC", m.lim=c(0, 3), extra= c(max.r2)) 
 Allmodels[Allmodels$max.r<=0.6, ] ##Subset models with max.r <=0.6 (not collinear)
 NCM <- get.models(Allmodels, subset = max.r<=0.6) ##Retrieve models with max.r <=0.6 (not collinear)
 model.sel(NCM) ##Final model selection table
