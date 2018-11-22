@@ -1,4 +1,4 @@
 # dredge_mc
-Assess multicollinearity between predictors when running the dredge function (MuMIn - R)
+Model selection using a customized dredge function to account for multicollinearity (MuMIn - R)
 
 Dependencies: Packages MASS, MuMIn, nlme, and lme4.
