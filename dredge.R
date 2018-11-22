@@ -16,7 +16,6 @@ cor(rdata[, 1:3])
 gls.model <- gls(A ~ B + C, data = rdata, method="ML")
 lme.model <- lme(A ~ B + C, random = ~1| D, data = rdata, method="ML")
 lmer.model <- lmer(A ~ B + C + (1|D), data = rdata, REML=F)
-
   
 max.r <- function(x){
   if(class(x) =="lmerMod"){
@@ -40,7 +39,6 @@ max.r <- function(x){
     max(abs(cormf))
   }
 }
-
 
 max.r(gls.model) ## Test function
 max.r(lme.model) ## Test function
