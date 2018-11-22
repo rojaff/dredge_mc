@@ -24,7 +24,7 @@ max.r <- function(x){
   corm <- summary(x)$corBeta} 
   else if(class(x)=="lme"){
     corm <- summary(x)$corFixed}
-  else { print("Error: unknown model class")}
+  else { print("Error: invalid model class")}
   corm <- as.matrix(corm)
   if (length(corm)==1){
     corm <- 0
