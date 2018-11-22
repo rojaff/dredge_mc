@@ -47,6 +47,7 @@ max.r <- function(x){
 }
 
 max.r(lm.model) ## Test function
+max.r(glm.model) ## Test function
 max.r(gls.model) ## Test function
 max.r(lme.model) ## Test function
 max.r(lmer.model) ## Test function
