@@ -7,14 +7,13 @@ library(MuMIn)
 mu <- rep(0,2)
 Sigma <- matrix(.7, nrow=2, ncol=2) + diag(2)*.3
 rawvars <- mvrnorm(n=10000, mu=mu, Sigma=Sigma)
-
 rdata <- data.frame(A=rawvars[,1], B=rawvars[, 2], C=rnorm(10000), D=rep(c("A","B","C", "D"), each=10, 10000))
 cor(rdata[, 1:3])
 
 #################################### nlme package
 library(nlme)
 
-### Full models
+### Full models containing continuous predictor variables
 gls.model <- gls(A ~ B + C, data = rdata, method="ML")
 lme.model <- lme(A ~ B + C, random = ~1| D, data = rdata, method="ML")
 
@@ -53,7 +52,7 @@ model.sel(NCM) ##Final model selection table
 ##################################### lme4 package
 library(lme4)
 
-###Full model
+###Full model containing continuous predictor variables
 lmer.model <- lmer(A ~ B + C + (1|D), data = rdata, REML=F)
 
 ### Function to calculate maximum correlation coefficient between predictor variables, retrieved from each model
