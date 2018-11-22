@@ -15,7 +15,7 @@ cor(rdata[, 1:3])
 library(nlme)
 
 ### Full models
-gls.model <- gls(A ~ B + C + D, data = rdata, method="ML")
+gls.model <- gls(A ~ B + C, data = rdata, method="ML")
 lme.model <- lme(A ~ B + C, random = ~1| D, data = rdata, method="ML")
 
 ### Function to calculate maximum correlation coefficient between predictor variables, retrieved from each model
