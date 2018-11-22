@@ -1,26 +1,28 @@
 
 ############### Model selection using a customized dredge function to account for multicollinearity #################
-library(MASS)
 library(MuMIn)
 library(nlme)
 library(lme4)
 
-## Create dataset with correlated variables
-mu <- rep(0,2)
-Sigma <- matrix(.7, nrow=2, ncol=2) + diag(2)*.3
-rawvars <- mvrnorm(n=10000, mu=mu, Sigma=Sigma)
-rdata <- data.frame(A=rawvars[,1], B=rawvars[, 2], C=rnorm(10000), D=rep(c("A","B","C", "D"), each=10, 10000))
-cor(rdata[, 1:3])
+## Dataset with correlated variables
+data(airquality)
+airquality <- airquality[complete.cases(airquality), ]
+airquality$Month <- factor(airquality$Month)
+str(airquality)
+cor(airquality[ , 1:4])
 
 ### Full models containing continuous predictor variables
-lm.model <- lm(A ~ B + C, data = rdata)
-gls.model <- gls(A ~ B + C, data = rdata, method="ML")
-lme.model <- lme(A ~ B + C, random = ~1| D, data = rdata, method="ML")
-lmer.model <- lmer(A ~ B + C + (1|D), data = rdata, REML=F)
+lm.model <- lm(Temp ~ Ozone + Solar.R + Wind, data=airquality)
+glm.model <- glm(Temp ~ Ozone + Solar.R + Wind, data=airquality, family = "gaussian")
+gls.model <- gls(Temp ~ Ozone + Solar.R + Wind, data=airquality, method="ML")
+lme.model <- lme(Temp ~ Ozone + Solar.R + Wind, random = ~1| Month, data=airquality, method="ML")
+lmer.model <- lmer(Temp ~ Ozone + Solar.R + Wind + (1|Month), data=airquality, REML=F)
 
 ### Function to calculate maximum correlation coefficient between predictor variables, retrieved from each model
 max.r <- function(x){
   if(class(x)=="lm"){
+    corm <- summary(x, correlation=TRUE)$correlation}
+  else if(class(x)[1] == "glm"){
     corm <- summary(x, correlation=TRUE)$correlation}
   else if(class(x) =="lmerMod"){
     corm <- cov2cor(vcov(x))}
