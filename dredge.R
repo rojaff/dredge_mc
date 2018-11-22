@@ -16,7 +16,8 @@ cor(rdata[, 1:3])
 gls.model <- gls(A ~ B + C, data = rdata, method="ML")
 lme.model <- lme(A ~ B + C, random = ~1| D, data = rdata, method="ML")
 lmer.model <- lmer(A ~ B + C + (1|D), data = rdata, REML=F)
-  
+
+### Function to calculate maximum correlation coefficient between predictor variables, retrieved from each model
 max.r <- function(x){
   if(class(x) =="lmerMod"){
     corm <- cov2cor(vcov(x))}
