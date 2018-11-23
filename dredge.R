@@ -56,7 +56,6 @@ max.r(lmer.model) ## Test function
 options(na.action = na.fail)
 model <- lm.model ## Define model to be used
 Allmodels <- dredge(model, rank = "AIC", m.lim=c(0, 3), extra= c(max.r)) ###Run dredge specifying the number of predictor variables and including the max.r function
-Allmodels[Allmodels$max.r<=0.6, ] ##Subset models with max.r <=0.6 (not collinear)
-NCM <- get.models(Allmodels, subset = max.r<=0.6) ##Retrieve models with max.r <=0.6 (not collinear)
+NCM <- get.models(Allmodels, subset = max.r<=0.6) ##Retrieve non-collinear models (max.r <=0.6)
 model.sel(NCM) ##Final model selection table
 
