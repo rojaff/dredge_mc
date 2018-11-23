@@ -3,6 +3,7 @@
 library(MuMIn)
 library(nlme)
 library(lme4)
+library(MASS)
 
 ## Dataset with correlated variables
 data(airquality)
@@ -13,18 +14,20 @@ cor(airquality[ , 1:4])
 
 ### Full models containing continuous predictor variables
 lm.model <- lm(Temp ~ Ozone + Solar.R + Wind, data=airquality)
-glm.model <- glm(Temp ~ Ozone + Solar.R + Wind, data=airquality, family = "gaussian")
+glm.model <- glm(Day ~ Ozone + Solar.R + Wind, data=airquality, family = "poisson")
+glm.nb.model <- glm.nb(Day ~ Ozone + Solar.R + Wind, data=airquality)
 gls.model <- gls(Temp ~ Ozone + Solar.R + Wind, data=airquality, method="ML")
 lme.model <- lme(Temp ~ Ozone + Solar.R + Wind, random = ~1| Month, data=airquality, method="ML")
 lmer.model <- lmer(Temp ~ Ozone + Solar.R + Wind + (1|Month), data=airquality, REML=F)
+glmer.model <- glmer(Day ~ scale(Ozone) + scale(Solar.R) + scale(Wind) + (1|Month), data=airquality, family="poisson")
 
 ### Function to calculate maximum correlation coefficient between predictor variables, retrieved from each model
 max.r <- function(x){
-  if(class(x)=="lm"){
-    corm <- summary(x, correlation=TRUE)$correlation}
-  else if(class(x)[1] == "glm"){
+  if(class(x)[length(class(x))] == "lm"){
     corm <- summary(x, correlation=TRUE)$correlation}
   else if(class(x) =="lmerMod"){
+    corm <- cov2cor(vcov(x))}
+  else if(class(x) =="glmerMod"){
     corm <- cov2cor(vcov(x))}
   else if(class(x)=="gls"){
     corm <- summary(x)$corBeta} 
@@ -47,10 +50,12 @@ max.r <- function(x){
 }
 
 max.r(lm.model) ## Test function
-max.r(glm.model) ## Test function | Ignore Warning
+max.r(glm.model) ## Test function
+max.r(glm.nb.model) ## Test function
 max.r(gls.model) ## Test function
 max.r(lme.model) ## Test function
 max.r(lmer.model) ## Test function
+max.r(glmer.model) ## Test function
 
 ### Model selection accounting for multicollinearity
 options(na.action = na.fail)
