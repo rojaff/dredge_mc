@@ -27,6 +27,8 @@ max.r <- function(x){
     corm <- summary(x, correlation=TRUE)$correlation}
   else if(class(x) =="lmerMod"){
     corm <- cov2cor(vcov(x))}
+  else if(class(x) =="lmerModLmerTest"){
+    corm <- cov2cor(vcov(x))}
   else if(class(x) =="glmerMod"){
     corm <- cov2cor(vcov(x))}
   else if(class(x)=="gls"){
