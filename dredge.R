@@ -3,7 +3,7 @@
 library(MuMIn)
 library(nlme)
 library(lme4)
-library(MASS)
+
 
 ## Dataset with correlated variables
 data(airquality)
@@ -15,7 +15,7 @@ cor(airquality[ , 1:4])
 ### Full models containing continuous predictor variables
 lm.model <- lm(Temp ~ Ozone + Solar.R + Wind, data=airquality)
 glm.model <- glm(Day ~ Ozone + Solar.R + Wind, data=airquality, family = "poisson")
-glm.nb.model <- glm.nb(Day ~ Ozone + Solar.R + Wind, data=airquality)
+#glm.nb.model <- glm.nb(Day ~ Ozone + Solar.R + Wind, data=airquality)
 gls.model <- gls(Temp ~ Ozone + Solar.R + Wind, data=airquality, method="ML")
 lme.model <- lme(Temp ~ Ozone + Solar.R + Wind, random = ~1| Month, data=airquality, method="ML")
 lmer.model <- lmer(Temp ~ Ozone + Solar.R + Wind + (1|Month), data=airquality, REML=F)
